@@ -1,18 +1,26 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Show(){
+export default function Show() {
+    const [result, setResult] = useState(null);
 
-    function Deletefun (email) {
-        axios.delete("https://jfsd-hosting-spring-backend-production.up.railway.app/delete", {params:{
-            email: email
-        }}).then((res)=>{
-            alert(res.data);
-            setResult(null)
-        })
+    useEffect(() => {
+        axios.get("https://jfsd-hosting-spring-backend-production.up.railway.app/all")
+            .then((res) => {
+                setResult(res.data);
+            })
+            .catch((error) => console.error("Error fetching data:", error));
+    }, []); // Runs only once on component mount
+
+    function Deletefun(email) {
+        axios.delete("https://jfsd-hosting-spring-backend-production.up.railway.app/delete", { params: { email } })
+            .then((res) => {
+                alert(res.data);
+                setResult((prevResult) => prevResult.filter((user) => user.email !== email)); // Remove deleted item
+            });
     }
 
-    function Editfun (name, role, email, password) {
+    function Editfun(name, role, email, password) {
         document.getElementsByName("e_name")[0].value = name;
         document.getElementsByName("e_role")[0].value = role;
         document.getElementsByName("e_pass")[0].value = password;
@@ -21,38 +29,28 @@ export default function Show(){
     }
 
     function saveEdit() {
-        axios.put("https://jfsd-hosting-spring-backend-production.up.railway.app/update", {
+        const updatedUser = {
             name: document.getElementsByName("e_name")[0].value,
             role: document.getElementsByName("e_role")[0].value,
             email: document.getElementsByName("e_email")[0].value,
-            password: document.getElementsByName("e_pass")[0].value
-        }).then((res)=>{
-            alert(res.data)
-            setResult(null)
-        })
+            password: document.getElementsByName("e_pass")[0].value,
+        };
+        axios.put("https://jfsd-hosting-spring-backend-production.up.railway.app/update", updatedUser)
+            .then((res) => {
+                alert(res.data);
+                setResult(null); // Reload data after editing
+            });
     }
 
-    const [result, setResult] = useState(null)
-    
-    if(result == null) {
-        axios.get("https://jfsd-hosting-spring-backend-production.up.railway.app/all", {}).then ((res)=>{
-            setResult(res.data)
-        })
+    if (result === null) {
+        return <div>Fetching data...</div>;
     }
 
-    if(result == null){
     return (
         <div>
-            result is fetching 
-        </div>
-    );
-    }
-
-    else{
-        return (
-            <div>
-                <table border="1" style={{ color: "blue" }}>
-                    <tr style = {{ backgroundColor: "yellow" }}>
+            <table border="1" style={{ color: "blue" }}>
+                <thead>
+                    <tr style={{ backgroundColor: "yellow" }}>
                         <th>NAME</th>
                         <th>ROLE</th>
                         <th>EMAIL</th>
@@ -60,38 +58,36 @@ export default function Show(){
                         <th>DELETE</th>
                         <th>EDIT</th>
                     </tr>
-                {result.map((obj, index)=>{
-                    return(
-                        <tr style={{backgroundColor: index%2 === 0?'yellowgreen':'red'}}>
+                </thead>
+                <tbody>
+                    {result.map((obj, index) => (
+                        <tr key={index} style={{ backgroundColor: index % 2 === 0 ? 'yellowgreen' : 'red' }}>
                             <td>{obj.name}</td>
                             <td>{obj.role}</td>
                             <td>{obj.email}</td>
                             <td>{obj.password}</td>
-                            <td> <button onClick = {()=>Deletefun(obj.email)} > DELETE </button> </td>
-                            <td> <button onClick = {()=>Editfun(obj.name, obj.role, obj.email, obj.password)} > EDIT </button> </td>
+                            <td><button onClick={() => Deletefun(obj.email)}>DELETE</button></td>
+                            <td><button onClick={() => Editfun(obj.name, obj.role, obj.email, obj.password)}>EDIT</button></td>
                         </tr>
-                    );
-                })}
-                </table>
-                <br/>
-                <br/>
-                <div id="edit" style={{ display:"none" }}>
-                    Name: <input type = "text" name = "e_name" />
-                    <br/>
-                    Role: <select name = "e_role">
-                        <option value = {1}> Admin </option>
-                        <option value = {0}> Guest </option>
-                        <option value = {2}> User </option>
-                    </select>
-                    <br/>
-                    password: <input type = "password" name = "e_pass" />
-                    <br/>
-                    <input type = "text" name = "e_email" style={{ display: "none" }} />
-                    <br/>
-                    <button onClick={() => saveEdit()}> SAVE EDIT </button>
-                </div>
+                    ))}
+                </tbody>
+            </table>
+            <div id="edit" style={{ display: "none" }}>
+                <label>Name:</label> <input type="text" name="e_name" />
+                <br />
+                <label>Role:</label>
+                <select name="e_role">
+                    <option value="1">Admin</option>
+                    <option value="0">Guest</option>
+                    <option value="2">User</option>
+                </select>
+                <br />
+                <label>Password:</label> <input type="password" name="e_pass" />
+                <br />
+                <input type="text" name="e_email" style={{ display: "none" }} />
+                <br />
+                <button onClick={() => saveEdit()}>SAVE EDIT</button>
             </div>
-        );
-    }
-
+        </div>
+    );
 }
