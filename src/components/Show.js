@@ -5,18 +5,21 @@ export default function Show() {
     const [result, setResult] = useState(null);
 
     useEffect(() => {
+        // Fetch data only once on mount
         axios.get("https://jfsd-hosting-spring-backend-production.up.railway.app/all")
             .then((res) => {
+                console.log("Fetched data:", res.data);  // Debugging
                 setResult(res.data);
             })
             .catch((error) => console.error("Error fetching data:", error));
-    }, []); // Runs only once on component mount
+    }, []); // Empty dependency array to ensure it runs only once
 
     function Deletefun(email) {
         axios.delete("https://jfsd-hosting-spring-backend-production.up.railway.app/delete", { params: { email } })
             .then((res) => {
                 alert(res.data);
-                setResult((prevResult) => prevResult.filter((user) => user.email !== email)); // Remove deleted item
+                // Update the result by filtering out the deleted item
+                setResult((prevResult) => prevResult.filter((user) => user.email !== email));
             });
     }
 
@@ -38,9 +41,11 @@ export default function Show() {
         axios.put("https://jfsd-hosting-spring-backend-production.up.railway.app/update", updatedUser)
             .then((res) => {
                 alert(res.data);
-                setResult(null); // Reload data after editing
+                setResult(null); // Reset to refetch updated data
             });
     }
+
+    console.log("Rendering result:", result);  // Debugging
 
     if (result === null) {
         return <div>Fetching data...</div>;
