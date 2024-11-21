@@ -1,0 +1,62 @@
+
+### **Deploying a Java Full-Stack Application (React + Spring Boot + MySQL)**
+
+#### **Step 1: Ensure the Application is Working Locally**
+Before deploying, make sure that:
+- Your **React frontend** is working properly by running it locally (`npm start`).
+- Your **Spring Boot backend** is running correctly 
+- The **MySQL database** is connected and running.
+
+#### **Step 2: Push Code to GitHub**
+1. **Initialize Git** (if you haven't already):
+   ```bash
+   git init
+   ```
+2. **Add all your files to Git**:
+   ```bash
+   git add .
+   ```
+3. **Commit the changes**:
+   ```bash
+   git commit -m "Initial commit of full-stack app"
+   ```
+4. **Create a GitHub repository** (if not already created).
+5. **Add the remote repository URL**:
+   ```bash
+   git remote add origin <your-github-repo-url>
+   ```
+6. **Push your code to GitHub**:
+   ```bash
+   git push origin main
+   ```
+
+---
+
+#### **Step 3: Deploy the Frontend (React) to Netlify**
+1. **Sign up on Netlify**:
+   - Go to [Netlify](https://www.netlify.com/) and sign up using your **GitHub** account.
+   
+2. **Authorize Netlify to access your GitHub**:
+   - After signing up, Netlify will ask you to authorize GitHub. You can either authorize **all repositories** or select specific ones for deployment.
+
+3. **Add a New Site**:
+   - Once logged in, click on **"Add new site"**.
+   - Choose **GitHub** as the source of your project.
+
+4. **Select Your React Repository**:
+   - Find your **React repository** in the list of GitHub repositories.
+   - Click on your React repo to deploy.
+
+5. **Configure Deployment**:
+   - Choose the **branch** to deploy (usually `main`).
+   - Set the **build command** as `npm run build`.
+   - Set the **publish directory** as `build`.
+
+6. **Deploy the Site**:
+   - Click **Deploy site** to start the deployment process.
+   - Wait for the build to complete.
+
+7. **Get the Deployment Link**:
+   - After the deployment is complete, you’ll receive a link to your live React app hosted on Netlify.
+   - You can customize the site name by clicking on **Site settings** and changing the name as you like.
+
